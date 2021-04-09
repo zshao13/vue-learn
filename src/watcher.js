@@ -50,6 +50,6 @@ export default class Watcher {
     }
 
     update () {
-        console.log("视图更新啦～");
+        console.log("视图更新啦～", this.vm);
     }
 }

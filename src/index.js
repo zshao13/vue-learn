@@ -1,35 +1,41 @@
-import { observe } from './observe'
+import { observe, set } from './observe'
 import Watcher from './watcher'
 
-class Vue {
-    constructor(options) {
-        this.data = options.data
-        observe(this.data)
-        // 模仿一个渲染 watcher
-        new Watcher(this, render)
-    }
+
+function Vue (options) {
+    this.data = options.data
+    observe(this.data)
+    // 模仿一个渲染 watcher
+    new Watcher(this, render)
 }
 
 function render (vm) {
     console.log(vm)
+    // console.log(vm.data)
     // console.log(vm.data.test);
+    // console.log(vm.data.obj);
     // console.log(vm.data.test);
     // console.log(vm.data.name);
     // console.log(vm.data.obj);
-    console.log(vm.data.obj.obj1);
+    // console.log(vm.data.obj.obj1);
+    console.log(vm.data.arr);
 }
 
 let app = new Vue({
     data: {
-        test: 'i am test',
+        // test: 'i am test',
         name: 'li hua',
-        obj: {
-            obj1: '111'
-        }
+        // obj: {
+        //     obj1: '111'
+        // }
+        arr: [1, 2]
     }
 })
 
-// console.log(app)
+// set(app.data.obj, 'newKey', 'new value')
 
-// o._data.test = 'hello'
-// o._data.name = 'hello vvvv'
+app.data.arr.push(3)
+
+// app.data.newKey = 'new value'
+
+// console.log(app)
