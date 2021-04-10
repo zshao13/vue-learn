@@ -69,8 +69,10 @@ function defineReactive (obj, key, val, shallow) {
             return val
         },
         set: function reactiveSetter (newVal) {
-            // if (newVal === val) return
+            if (newVal === val) return
             val = newVal
+            childOb = observe(newVal)
+            dep.notify()
         }
     })
 }

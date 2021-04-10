@@ -5,18 +5,16 @@ let uid = 0
 
 export default class Dep {
     constructor () {
-        /* 用来存放Watcher对象的数组 */
         this.id = uid++
         this.subs = [];
     }
 
-    /* 在subs中添加一个Watcher对象 */
     addSub (sub) {
         this.subs.push(sub);
     }
 
     removeSub (sub) {
-        // remove(this.subs, sub)
+        remove(this.subs, sub)
     }
 
     depend () {
@@ -25,11 +23,19 @@ export default class Dep {
         }
     }
 
-    /* 通知所有Watcher对象更新视图 */
     notify () {
         const subs = this.subs.slice()
         for (let i = 0, l = subs.length; i < l; i++) {
             subs[i].update()
+        }
+    }
+}
+
+function remove (arr, item) {
+    if (arr.length) {
+        const index = arr.indexOf(item)
+        if (index > -1) {
+            return arr.splice(index, 1)
         }
     }
 }

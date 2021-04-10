@@ -1,10 +1,11 @@
 import Dep, { pushTarget, popTarget } from './dep'
-
-
+import { nextTick } from './next-tick'
+let uid = 0;
 export default class Watcher {
     constructor (vm, expOrFn, cb) {
         /* 在new一个Watcher对象时将该对象赋值给Dep.target，在get中会用到 */
         // Dep.target = this;
+        this.id = ++uid
         this.deps = []
         this.newDeps = []
         this.depIds = new Set()
@@ -26,11 +27,12 @@ export default class Watcher {
         } catch (e) {
             throw e
         } finally {
+            // 侦听器 设置 deep 为true
             // if (this.deep) {
             //     traverse(value)
             // }
-            // popTarget()
-            // this.cleanupDeps()
+            popTarget()
+            this.cleanupDeps()
         }
         return value
     }
@@ -50,6 +52,74 @@ export default class Watcher {
     }
 
     update () {
+        queueWatcher(this)
+    }
+
+    run () {
+        // const value = this.get()
         console.log("视图更新啦～", this.vm);
+    }
+
+    cleanupDeps () {
+        let i = this.deps.length
+        while (i--) {
+            const dep = this.deps[i]
+            if (!this.newDepIds.has(dep.id)) {
+                dep.removeSub(this)
+            }
+        }
+        let tmp = this.depIds
+        this.depIds = this.newDepIds
+        this.newDepIds = tmp
+        this.newDepIds.clear()
+        tmp = this.deps
+        this.deps = this.newDeps
+        this.newDeps = tmp
+        this.newDeps.length = 0
+    }
+}
+
+let has = {};
+let queue = [];
+let waiting = false;
+let flushing = false;
+let index = 0
+
+function flushSchedulerQueue () {
+    flushing = true
+    let watcher, id;
+
+    queue.sort((a, b) => a.id - b.id)
+
+    for (index = 0; index < queue.length; index++) {
+        watcher = queue[index];
+        id = watcher.id;
+        has[id] = null;
+        watcher.run();
+    }
+
+    index = queue.length = 0
+    waiting = flushing = false
+    has = {}
+}
+
+function queueWatcher(watcher) {
+    const id = watcher.id;
+    if (has[id] == null) {
+        has[id] = true;
+        if (!flushing) {
+            queue.push(watcher);
+        } else {
+            let i = queue.length - 1
+            while (i > index && queue[i].id > watcher.id) {
+                i--
+            }
+            queue.splice(i + 1, 0, watcher)
+        }
+
+        if (!waiting) {
+            waiting = true;
+            nextTick(flushSchedulerQueue);
+        }
     }
 }
