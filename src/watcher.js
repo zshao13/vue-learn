@@ -3,8 +3,6 @@ import { nextTick } from './next-tick'
 let uid = 0;
 export default class Watcher {
     constructor (vm, expOrFn, cb) {
-        /* 在new一个Watcher对象时将该对象赋值给Dep.target，在get中会用到 */
-        // Dep.target = this;
         this.id = ++uid
         this.deps = []
         this.newDeps = []
@@ -27,10 +25,6 @@ export default class Watcher {
         } catch (e) {
             throw e
         } finally {
-            // 侦听器 设置 deep 为true
-            // if (this.deep) {
-            //     traverse(value)
-            // }
             popTarget()
             this.cleanupDeps()
         }
@@ -56,8 +50,8 @@ export default class Watcher {
     }
 
     run () {
-        // const value = this.get()
-        console.log("视图更新啦～", this.vm);
+        const value = this.get()
+        // console.log("视图更新啦～", this.vm);
     }
 
     cleanupDeps () {

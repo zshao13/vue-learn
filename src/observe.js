@@ -1,7 +1,6 @@
 import Dep from './dep'
 import { arrayMethods } from './array'
 
-// 功能就是用来监测数据的变化
 export function observe (value) {
     if (!value || (typeof value !== 'object')) {
         return
@@ -10,13 +9,12 @@ export function observe (value) {
     return new Observer(value)
 }
 
-// 它的作用是给对象的属性添加 getter 和 setter，用于依赖收集和派发更新：
+// 给对象的属性添加 getter 和 setter，用于依赖收集和派发更新：
 class Observer {
     constructor (value) {
         this.value = value
         this.dep = new Dep()
 
-        // 把自身实例添加到数据对象 value 的 __ob__ 属性上
         Object.defineProperty(value, '__ob__', {
             value: this,
             enumerable: false,
@@ -46,8 +44,6 @@ class Observer {
     }
 }
 
-
-// 功能就是定义一个响应式对象，给对象动态添加 getter 和 setter
 function defineReactive (obj, key, val, shallow) {
     const dep = new Dep();
 

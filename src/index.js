@@ -6,9 +6,19 @@ function Vue (options) {
     this.data = options.data
     observe(this.data)
     // 模仿一个渲染 watcher
-    new Watcher(this, render)
+    new Watcher(this, updateComponent)
 }
 
+function updateComponent (vm) {
+    update(render(vm))
+}
+
+// 把 VNode 渲染成真实的 DOM
+function update (vNode) {
+    console.log('视图跟新了~');
+}
+
+// 生成VNode
 function render (vm) {
     console.log(vm)
     // console.log(vm.data)
@@ -24,11 +34,10 @@ function render (vm) {
 
 let app = new Vue({
     data: {
-        // test: 'i am test',
         name: 'li hua',
-        // obj: {
-        //     obj1: '111'
-        // }
+        obj: {
+            obj1: '111'
+        },
         arr: [1, 2]
     }
 })
@@ -43,3 +52,14 @@ app.data.name = '333'
 // app.data.newKey = 'new value'
 
 // console.log(app)
+
+<div id="app">
+    {{ message }}
+</div>
+
+new Vue({
+    el: '#app',
+    data: {
+        message: 'Hello~'
+    }
+})
